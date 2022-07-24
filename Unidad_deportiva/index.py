@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+import cx_Oracle
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -17,10 +18,36 @@ def empleadomodulo():
 @app.route('/registrar_empleado')
 def registrar_empleado():
     return render_template('registrar_empleado.html')
+def registrar():
+        tipodoc = request.form('inputTipodocumento')
+        numerodoc = request.form('inputNumerodocumento')
+        try:
+            conexion = cx_Oracle.connect(
+            user='cdrodriguezl',
+            password='cdrodriguezl',
+            dsn='localhost/xe')
+        except Exception as err:
+            print('error')
+
+        try:
+            cur_01=conexion.cursor()
+            insert_datos= '''insert into tipoDocumento values(
+            tipodoc , numerodoc)'''
+            cur_01.execute(insert_datos)
+        except Exception as err:
+            print('error', err)
+    
+        else:
+            print('Insertados')
+        conexion.commit()
+
+
 
 @app.route('/modificar_empleado')
 def modificar_empleado():
     return render_template('modificar_empleado.html')
+
+
 
 if __name__=='__main__':
     app.run(debug=True, port=5017)
