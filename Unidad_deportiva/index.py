@@ -1,7 +1,8 @@
 import cx_Oracle
-from flask import Flask, render_template, request
+from flask import Flask, jsonify, render_template, request, flash
 
 app = Flask(__name__)
+app.secret_key='bacc68609f8cffa2fdeb6676ed7433940f309f0f8c1f5992'
 
 @app.route('/')
 def principal():
@@ -15,8 +16,42 @@ def estudiantemodulo():
 def empleadomodulo():
     return render_template('empleado.html')
 
-@app.route('/registrar_empleado')
+@app.route('/registrar_empleado', methods=('GET','POST'))
 def registrar_empleado():
+    if request.method == 'POST':
+        nombres = request.form['nombres']
+        apellidos = request.form['apellidos']
+        tipoDocumento= request.form['tipoDocumento']
+        numeroDocumento= request.form['numeroDocumento']
+        telefono=request.form['telefono']
+        correo=request.form['correo']
+        cargo= request.form['cargo']
+        codigoEmpleado=request.form['codigoEmpleado']
+        dependencia=request.form['dependencia']
+        fecha=request.form['fecha']
+        if not nombres:
+            flash('nombres is required!','alert')
+        elif not apellidos:
+            flash('apellidos is required!','alert')
+        elif not tipoDocumento or tipoDocumento=="Tipo documento...":
+            flash('tipoDocumento is required!','alert')
+        elif not numeroDocumento:
+            flash('numeroDocumento is required!','alert')
+        elif not telefono:
+            flash('telefono is required!','alert')
+        elif not correo:
+            flash('correo is required!','alert')
+        elif not cargo or cargo=="Cargo...":
+            flash('cargo is required!','alert')
+        elif not codigoEmpleado:
+            flash('codigoEmpleado is required!','alert')
+        elif not dependencia:
+            flash('dependencia is required!','alert')
+        elif not fecha:
+            flash('fecha is required!','alert')
+        else:
+            print(nombres,apellidos,tipoDocumento,numeroDocumento,telefono,correo,cargo,codigoEmpleado,dependencia,fecha)
+            flash('empleado registrado','success')
     return render_template('registrar_empleado.html')
 def registrar():
         tipodoc = request.form('inputTipodocumento')
@@ -43,10 +78,48 @@ def registrar():
 
 
 
-@app.route('/modificar_empleado')
+@app.route('/modificar_empleado', methods=('GET','POST'))
 def modificar_empleado():
-    return render_template('modificar_empleado.html')
-
+    if request.method == 'POST':
+        nombres = request.form['nombres']
+        apellidos = request.form['apellidos']
+        tipoDocumento= request.form['tipoDocumento']
+        numeroDocumento= request.form['numeroDocumento']
+        telefono=request.form['telefono']
+        correo=request.form['correo']
+        cargo= request.form['cargo']
+        dependencia=request.form['dependencia']
+        fecha=request.form['fecha']
+        if not nombres:
+            flash('nombres is required!','alert')
+        elif not apellidos:
+            flash('apellidos is required!','alert')
+        elif not tipoDocumento or tipoDocumento=="Tipo documento...":
+            flash('tipoDocumento is required!','alert')
+        elif not numeroDocumento:
+            flash('numeroDocumento is required!','alert')
+        elif not telefono:
+            flash('telefono is required!','alert')
+        elif not correo:
+            flash('correo is required!','alert')
+        elif not cargo or cargo=="Cargo...":
+            flash('cargo is required!','alert')
+        elif not dependencia:
+            flash('dependencia is required!','alert')
+        elif not fecha:
+            flash('fecha is required!','alert')
+        else:
+            print(nombres,apellidos,tipoDocumento,numeroDocumento,telefono,correo,cargo,dependencia,fecha)
+            flash('empleado modificado','success')
+        return render_template('modificar_empleado.html')
+    elif request.method=='GET':
+        codigo=request.args.get('codigo', default = '', type = str)
+        if not codigo or codigo=='':
+            return render_template('modificar_empleado.html')
+        else:
+            print(codigo)
+            info={'nombres':'jorge','apellidos':'perez','tipoDocumento':'CC','numeroDocumento':'1014444'}
+            return render_template('modificar_empleado.html',form=info)
 
 
 if __name__=='__main__':
