@@ -4,7 +4,7 @@
 
 
 {% block body %}
-<h1>0.
-    empleados
-</h1>
+{%for i in resultados%}
+  <div><h1>{{i.nombre}} {{i.apellido}}</h1></div>
+{%endfor%}
 {% endblock %}

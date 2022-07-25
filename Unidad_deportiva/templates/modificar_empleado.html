@@ -15,23 +15,14 @@
 </form>
 <form class="col-md-10" action="/modificar_empleado" method="post">
     <div class="col-md-6">
+        <label for="inputNombres" class="form-label">Nombres actual</label>
+        <input type="text" class="form-control" id="inputNombres" name="nombres" value="" >
         <label for="inputNombres" class="form-label">Nombres</label>
         <input type="text" class="form-control" id="inputNombres" name="nombres" value="" >
     </div>
     <div class="col-md-6">
         <label for="inputApellidos" class="form-label">Apellidos</label>
         <input type="text" class="form-control" id="inputApellidos" name="apellidos" >
-    </div>
-    <div class="col-md-3">
-      <label for="inputTipodocumento" class="form-label"></label>
-      <select id="inputTipodocumento" class="form-select" name="tipoDocumento" >
-        <option selected>Tipo documento...</option>
-        <option>CC</option>
-      </select>
-    </div>
-    <div class="col-md-6">
-        <label for="inputNumerodocumento" class="form-label">Numero de Documento</label>
-        <input type="number" class="form-control" id="inputNumerodocumento" name="numeroDocumento" >
     </div>
     <div class="col-md-4">
         <label for="inputTelefono" class="form-label">Telefono</label>

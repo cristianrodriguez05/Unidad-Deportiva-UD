@@ -1,5 +1,11 @@
+from warnings import catch_warnings
 import cx_Oracle
 from flask import Flask, jsonify, render_template, request, flash
+
+conexion = cx_Oracle.connect(
+user='cdrodriguezl',
+password='cdrodriguezl',
+dsn='localhost/xe')
 
 app = Flask(__name__)
 app.secret_key='bacc68609f8cffa2fdeb6676ed7433940f309f0f8c1f5992'
@@ -14,7 +20,24 @@ def estudiantemodulo():
 
 @app.route('/empleado')
 def empleadomodulo():
-    return render_template('empleado.html')
+    cur_01=conexion.cursor()
+    select_empleados= " select * from persona join empleado ON persona.idpersona = empleado.idpersonafk2 join empleado_cargo ON empleado.idempleado = empleado_cargo.idempleadofk"
+    cur_01.execute(select_empleados)
+    resultados=cur_01.fetchall()
+
+    resultadosjson=[]
+    for resultado in resultados: 
+        resultadosjson.append({
+            "nombre":resultado[2],
+            "apellido":resultado[3],
+            "tipodocumento":resultado[1],
+            "numerodocumento":resultado[0],
+            "idempleado":resultado[6],
+            "dependencia":resultado[8],
+            "cargo":resultado[10]
+        })
+
+    return render_template('empleado.html',resultados=resultadosjson)
 
 @app.route('/registrar_empleado', methods=('GET','POST'))
 def registrar_empleado():
@@ -28,7 +51,7 @@ def registrar_empleado():
         cargo= request.form['cargo']
         codigoEmpleado=request.form['codigoEmpleado']
         dependencia=request.form['dependencia']
-        fecha=request.form['fecha']
+        fecha=request.form['fecha'].replace('-','/')
         if not nombres:
             flash('nombres is required!','alert')
         elif not apellidos:
@@ -50,36 +73,27 @@ def registrar_empleado():
         elif not fecha:
             flash('fecha is required!','alert')
         else:
-            print(nombres,apellidos,tipoDocumento,numeroDocumento,telefono,correo,cargo,codigoEmpleado,dependencia,fecha)
-            flash('empleado registrado','success')
+            try:
+                print(nombres,apellidos,tipoDocumento,numeroDocumento,telefono,correo,cargo,codigoEmpleado,dependencia,fecha)
+                cur_01=conexion.cursor()
+                insert_datos= "insert into persona (idpersona, nombre, apellido, telefono, correo, idtipodocumentofk) VALUES (:1, :2, :3, :4, :5, :6)"
+                print(insert_datos)
+                cur_01.execute(insert_datos,[numeroDocumento, nombres, apellidos, telefono, correo, tipoDocumento])
+                insert_datos= "insert into empleado (idempleado, idpersonafk2, dependencia) VALUES (:1, :2, :3)"
+                cur_01.execute(insert_datos,[codigoEmpleado, numeroDocumento, dependencia])
+                insert_datos= "insert into empleado_cargo (idempleadofk, idcargofk, fechainicio) VALUES (:1, :2,TO_DATE(:3, 'yyyy/mm/dd'))"
+                cur_01.execute(insert_datos,[codigoEmpleado, cargo, fecha])
+                conexion.commit()
+                flash('empleado registrado','success')
+            except:
+                flash('fallo','alert')
+
     return render_template('registrar_empleado.html')
-def registrar():
-        tipodoc = request.form('inputTipodocumento')
-        numerodoc = request.form('inputNumerodocumento')
-        try:
-            conexion = cx_Oracle.connect(
-            user='cdrodriguezl',
-            password='cdrodriguezl',
-            dsn='localhost/xe')
-        except Exception as err:
-            print('error')
-
-        try:
-            cur_01=conexion.cursor()
-            insert_datos= '''insert into tipoDocumento values(
-            tipodoc , numerodoc)'''
-            cur_01.execute(insert_datos)
-        except Exception as err:
-            print('error', err)
-    
-        else:
-            print('Insertados')
-        conexion.commit()
-
 
 
 @app.route('/modificar_empleado', methods=('GET','POST'))
 def modificar_empleado():
+    resultados=()
     if request.method == 'POST':
         nombres = request.form['nombres']
         apellidos = request.form['apellidos']
@@ -117,9 +131,14 @@ def modificar_empleado():
         if not codigo or codigo=='':
             return render_template('modificar_empleado.html')
         else:
-            print(codigo)
-            info={'nombres':'jorge','apellidos':'perez','tipoDocumento':'CC','numeroDocumento':'1014444'}
-            return render_template('modificar_empleado.html',form=info)
+        
+            cur_01=conexion.cursor()
+            select_empleados= "  select * from persona join empleado ON persona.idpersona = empleado.idpersonafk2 join empleado_cargo ON empleado.idempleado = empleado_cargo.idempleadofk where empleado.idempleado = "+codigo
+            cur_01.execute(select_empleados)
+            resultados=cur_01.fetchone()
+
+
+            return render_template('modificar_empleado.html',form=resultados)
 
 
 if __name__=='__main__':
