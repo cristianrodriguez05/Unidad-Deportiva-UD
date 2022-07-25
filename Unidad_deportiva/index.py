@@ -1,3 +1,5 @@
+from ast import Try
+from turtle import update
 from warnings import catch_warnings
 import cx_Oracle
 from flask import Flask, jsonify, render_template, request, flash
@@ -93,52 +95,113 @@ def registrar_empleado():
 
 @app.route('/modificar_empleado', methods=('GET','POST'))
 def modificar_empleado():
-    resultados=()
+    resultadosjson={
+                    "Nombre":"nombres",
+                    "Apellidos":"apellidos",
+                    "Telefono":"telefono",
+                    "Correo":"correo",
+                    "Cargo":"cargo",
+                    "Dependencia":"dependencia",
+                    "Codigo":1,
+                    "Documento":1,
+                    "IdEmpleadoCargo":1            
+                    }
     if request.method == 'POST':
+        codigo=request.args.get('codigo', default = '', type = str)
+        documento=request.args.get('documento', default = '', type = str)
+        idempleadocargo=request.args.get('idempleadocargo', default = '', type = str)
         nombres = request.form['nombres']
         apellidos = request.form['apellidos']
-        tipoDocumento= request.form['tipoDocumento']
-        numeroDocumento= request.form['numeroDocumento']
         telefono=request.form['telefono']
         correo=request.form['correo']
         cargo= request.form['cargo']
         dependencia=request.form['dependencia']
-        fecha=request.form['fecha']
-        if not nombres:
-            flash('nombres is required!','alert')
-        elif not apellidos:
-            flash('apellidos is required!','alert')
-        elif not tipoDocumento or tipoDocumento=="Tipo documento...":
-            flash('tipoDocumento is required!','alert')
-        elif not numeroDocumento:
-            flash('numeroDocumento is required!','alert')
-        elif not telefono:
-            flash('telefono is required!','alert')
-        elif not correo:
-            flash('correo is required!','alert')
-        elif not cargo or cargo=="Cargo...":
-            flash('cargo is required!','alert')
-        elif not dependencia:
-            flash('dependencia is required!','alert')
-        elif not fecha:
-            flash('fecha is required!','alert')
+        fecha=request.form['fecha'].replace('-','/')
+
+        update_persona='UPDATE persona set '
+        update_persona_bool=False
+        update_persona_atributos=[]
+        update_empleado='UPDATE empleado set '
+        update_empleado_bool=False
+        update_empleado_atributos=[]
+        update_empleado_cargo='UPDATE empleado_cargo set  '
+        update_empleado_cargo_bool=False
+        update_empleado_cargo_atributos=[]
+        if (not codigo or codigo=='') and (not documento or documento=='') and (not idempleadocargo or idempleadocargo==''):
+            flash('Error al actualizar','alert')
         else:
-            print(nombres,apellidos,tipoDocumento,numeroDocumento,telefono,correo,cargo,dependencia,fecha)
+            if nombres and nombres!='':
+                update_persona_bool=True
+                update_persona_atributos.append("nombre='"+nombres+"'")
+            if apellidos and apellidos!='':
+                update_persona_bool=True
+                update_persona_atributos.append("apellido='"+apellidos+"'")
+            if telefono and telefono!='':
+                update_persona_bool=True
+                update_persona_atributos.append("telefono='"+telefono+"'")
+            if correo and correo!='':
+                update_persona_bool=True
+                update_persona_atributos.append("correo='"+correo+"'")
+            if cargo and cargo!="Cargo...":
+                update_empleado_cargo_bool=True
+                update_empleado_cargo_atributos.append("idcargofk='"+cargo+"'")
+            if dependencia and dependencia!='':
+                update_empleado_bool=False
+                update_empleado_atributos.append("dependencia='"+dependencia+"'")
+            if fecha and fecha!='':
+                update_empleado_cargo_bool=True
+                update_empleado_cargo_atributos.append("fechainicio=TO_DATE('"+fecha+"', 'yyyy/mm/dd')")
+
+            cur_01=conexion.cursor()
+            if update_persona_bool:
+                try:
+                    update_persona=update_persona+','.join(update_persona_atributos)+" Where idpersona = "+documento
+                    print(update_persona)
+                    cur_01.execute(update_persona)
+                except:
+                    flash('fallo al actualizar','alert')
+            if update_empleado_bool:
+                try:
+                    update_empleado=update_empleado+','.join(update_empleado_atributos)+' where idempleado ='+codigo
+                    print(update_empleado)
+                    cur_01.execute(update_empleado)
+                except:
+                    flash('fallo al actualizar','alert')
+            if update_empleado_cargo_bool:
+                try:
+                    update_empleado_cargo=update_empleado_cargo+','.join(update_empleado_cargo_atributos)+'where idempleado_cargo ='+idempleadocargo
+                    print(update_empleado_cargo)
+                    cur_01.execute(update_empleado_cargo)
+                except:
+                    flash('fallo al actualizar','alert')
+    
             flash('empleado modificado','success')
-        return render_template('modificar_empleado.html')
+            return render_template('modificar_empleado.html',form=resultadosjson)
     elif request.method=='GET':
         codigo=request.args.get('codigo', default = '', type = str)
         if not codigo or codigo=='':
-            return render_template('modificar_empleado.html')
+            return render_template('modificar_empleado.html',form=resultadosjson)
         else:
-        
             cur_01=conexion.cursor()
             select_empleados= "  select * from persona join empleado ON persona.idpersona = empleado.idpersonafk2 join empleado_cargo ON empleado.idempleado = empleado_cargo.idempleadofk where empleado.idempleado = "+codigo
             cur_01.execute(select_empleados)
             resultados=cur_01.fetchone()
-
-
-            return render_template('modificar_empleado.html',form=resultados)
+            if len(resultados)!=0:
+                resultado=resultados[0]
+                resultadosjson={
+                    "Nombre":resultado[2],
+                    "Apellidos":resultado[3],
+                    "Telefono":resultado[4],
+                    "Correo":resultado[5],
+                    "Cargo":resultado[10],
+                    "Dependencia":resultado[8],
+                    "Codigo":resultado[6],
+                    "Documento":resultado[0],
+                    "IdEmpleadoCargo":resultado[7]
+                }
+            else:
+                flash("Empleado no encontrado","alert")
+            return render_template('modificar_empleado.html',form=resultadosjson)
 
 
 if __name__=='__main__':

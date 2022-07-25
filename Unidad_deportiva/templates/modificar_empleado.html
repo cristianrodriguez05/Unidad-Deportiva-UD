@@ -13,40 +13,38 @@
       <button type="submit" class="btn btn-primary mb-3">Buscar Empleado</button>
     </div>
 </form>
-<form class="col-md-10" action="/modificar_empleado" method="post">
+<form class="col-md-10" action="/modificar_empleado?codigo={{request.args[form.Codigo]}}&documento={{request.args[form.Documento]}}&idempleadocargo={{request.args[form.IdEmpleadoCargo]}}" method="post">
     <div class="col-md-6">
-        <label for="inputNombres" class="form-label">Nombres actual</label>
-        <input type="text" class="form-control" id="inputNombres" name="nombres" value="" >
         <label for="inputNombres" class="form-label">Nombres</label>
-        <input type="text" class="form-control" id="inputNombres" name="nombres" value="" >
+        <input type="text" class="form-control" id="inputNombres" name="nombres" value="{{ request.form['nombres'] }}" placeholder="{{form.Nombre}}">
     </div>
     <div class="col-md-6">
         <label for="inputApellidos" class="form-label">Apellidos</label>
-        <input type="text" class="form-control" id="inputApellidos" name="apellidos" >
+        <input type="text" class="form-control" id="inputApellidos" name="apellidos" value="{{ request.form['apellidos'] }}" placeholder="{{form.Apellidos}}">
     </div>
     <div class="col-md-4">
         <label for="inputTelefono" class="form-label">Telefono</label>
-        <input type="number" class="form-control" id="inputTelefono" name="telefono" >
+        <input type="number" class="form-control" id="inputTelefono" name="telefono" value="{{ request.form['telefono'] }}" placeholder="{{form.Telefono}}">
     </div>
     <div class="col-md-6">
         <label for="inputCorreo" class="form-label">Correo</label>
-        <input type="email" class="form-control" id="inputCorreo" placeholder="ejemplo@ejemplo.com" name="correo" >
+        <input type="email" class="form-control" id="inputCorreo" name="correo" value="{{ request.form['correo'] }}" placeholder="{{form.Correo}}">
     </div>
     <div class="col-md-6">
         <label for="inputState" class="form-label"></label>
-        <select id="inputState" class="form-select" name="cargo" >
+        <select id="inputState" class="form-select" name="cargo" value="{{ request.form['cargo'] }}" placeholder="{{form.Cargo}}">
           <option selected>Cargo...</option>
-          <option>Administrador</option>
-          <option>Entrenador</option>
+          <option value="admi">Administrador</option>
+          <option value="entr">Entrenador</option>
         </select>
     </div>
     <div class="col-md-6">
       <label for="inputDependencia" class="form-label">Dependencia</label>
-      <input type="text" class="form-control" id="inputDependencia" name="dependencia" >
+      <input type="text" class="form-control" id="inputDependencia" name="dependencia" value="{{ request.form['dependencia'] }}" placeholder="{{form.Dependencia}}">
     </div>
     <div class="col-md-4">
       <span class="input-Dia">Fecha de ingreso</span>
-      <input type="date"  class="form-control" name="fecha">
+      <input type="date"  class="form-control" name="fecha" value="{{ request.form['fecha'] }}" >
     </div> 
     <div class="col-md-6">
       <button type="submit" class="btn btn-primary">Modificar Datos</button>
