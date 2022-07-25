@@ -13,7 +13,7 @@
       <button type="submit" class="btn btn-primary mb-3">Buscar Empleado</button>
     </div>
 </form>
-<form class="col-md-10" action="/modificar_empleado?codigo={{request.args[form.Codigo]}}&documento={{request.args[form.Documento]}}&idempleadocargo={{request.args[form.IdEmpleadoCargo]}}" method="post">
+<form class="col-md-10" action="/modificar_empleado?codigo={{form.Codigo}}&documento={{form.Documento}}&idempleadocargo={{form.IdEmpleadoCargo}}" method="post">
     <div class="col-md-6">
         <label for="inputNombres" class="form-label">Nombres</label>
         <input type="text" class="form-control" id="inputNombres" name="nombres" value="{{ request.form['nombres'] }}" placeholder="{{form.Nombre}}">

@@ -36,7 +36,7 @@ def empleadomodulo():
             "numerodocumento":resultado[0],
             "idempleado":resultado[6],
             "dependencia":resultado[8],
-            "cargo":resultado[10]
+            "cargo":resultado[11]
         })
 
     return render_template('empleado.html',resultados=resultadosjson)
@@ -158,6 +158,7 @@ def modificar_empleado():
                     update_persona=update_persona+','.join(update_persona_atributos)+" Where idpersona = "+documento
                     print(update_persona)
                     cur_01.execute(update_persona)
+                    conexion.commit()
                 except:
                     flash('fallo al actualizar','alert')
             if update_empleado_bool:
@@ -169,9 +170,10 @@ def modificar_empleado():
                     flash('fallo al actualizar','alert')
             if update_empleado_cargo_bool:
                 try:
-                    update_empleado_cargo=update_empleado_cargo+','.join(update_empleado_cargo_atributos)+'where idempleado_cargo ='+idempleadocargo
+                    update_empleado_cargo=update_empleado_cargo+','.join(update_empleado_cargo_atributos)+' where idempleado_cargo ='+idempleadocargo
                     print(update_empleado_cargo)
                     cur_01.execute(update_empleado_cargo)
+
                 except:
                     flash('fallo al actualizar','alert')
     
@@ -186,18 +188,18 @@ def modificar_empleado():
             select_empleados= "  select * from persona join empleado ON persona.idpersona = empleado.idpersonafk2 join empleado_cargo ON empleado.idempleado = empleado_cargo.idempleadofk where empleado.idempleado = "+codigo
             cur_01.execute(select_empleados)
             resultados=cur_01.fetchone()
-            if len(resultados)!=0:
-                resultado=resultados[0]
+            print(resultados)
+            if resultados:
                 resultadosjson={
-                    "Nombre":resultado[2],
-                    "Apellidos":resultado[3],
-                    "Telefono":resultado[4],
-                    "Correo":resultado[5],
-                    "Cargo":resultado[10],
-                    "Dependencia":resultado[8],
-                    "Codigo":resultado[6],
-                    "Documento":resultado[0],
-                    "IdEmpleadoCargo":resultado[7]
+                    "Nombre":resultados[2],
+                    "Apellidos":resultados[3],
+                    "Telefono":resultados[5],
+                    "Correo":resultados[4],
+                    "Cargo":resultados[11],
+                    "Dependencia":resultados[8],
+                    "Codigo":resultados[6],
+                    "Documento":resultados[0],
+                    "IdEmpleadoCargo":resultados[9]
                 }
             else:
                 flash("Empleado no encontrado","alert")
