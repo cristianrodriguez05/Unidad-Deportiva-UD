@@ -1,0 +1,66 @@
+{%extends './base_empleados.html'%}
+
+{% block title %} Modificar empleado{% endblock %}
+
+
+{% block body %}
+<form class="col-md-10"  method="get" action="/modificar_empleado?codigo={{request.args['codigo']}}">
+    <div class="col-md-6">
+      <label for="inputCodigo" class="visually-hidden">Codigo empleado</label>
+      <input type="number" class="form-control" id="inputPassword2" placeholder="Codigo" name="codigo" >
+    </div>
+    <div class="col-md-6">
+      <button type="submit" class="btn btn-primary mb-3">Buscar Empleado</button>
+    </div>
+</form>
+<form class="col-md-10" action="/modificar_empleado" method="post">
+    <div class="col-md-6">
+        <label for="inputNombres" class="form-label">Nombres actual</label>
+        <input type="text" class="form-control" id="inputNombres" name="nombres" value="{{form[2]}}" >
+        <label for="inputNombres" class="form-label">Nombres</label>
+        <input type="text" class="form-control" id="inputNombres" name="nombres" value="" >
+    </div>
+    <div class="col-md-6">
+        <label for="inputApellidos" class="form-label">Apellidos</label>
+        <input type="text" class="form-control" id="inputApellidos" name="apellidos" >
+    </div>
+    <div class="col-md-3">
+      <label for="inputTipodocumento" class="form-label"></label>
+      <select id="inputTipodocumento" class="form-select" name="tipoDocumento" >
+        <option selected>Tipo documento...</option>
+        <option>CC</option>
+      </select>
+    </div>
+    <div class="col-md-6">
+        <label for="inputNumerodocumento" class="form-label">Numero de Documento</label>
+        <input type="number" class="form-control" id="inputNumerodocumento" name="numeroDocumento" >
+    </div>
+    <div class="col-md-4">
+        <label for="inputTelefono" class="form-label">Telefono</label>
+        <input type="number" class="form-control" id="inputTelefono" name="telefono" >
+    </div>
+    <div class="col-md-6">
+        <label for="inputCorreo" class="form-label">Correo</label>
+        <input type="email" class="form-control" id="inputCorreo" placeholder="ejemplo@ejemplo.com" name="correo" >
+    </div>
+    <div class="col-md-6">
+        <label for="inputState" class="form-label"></label>
+        <select id="inputState" class="form-select" name="cargo" >
+          <option selected>Cargo...</option>
+          <option>Administrador</option>
+          <option>Entrenador</option>
+        </select>
+    </div>
+    <div class="col-md-6">
+      <label for="inputDependencia" class="form-label">Dependencia</label>
+      <input type="text" class="form-control" id="inputDependencia" name="dependencia" >
+    </div>
+    <div class="col-md-4">
+      <span class="input-Dia">Fecha de ingreso</span>
+      <input type="date"  class="form-control" name="fecha">
+    </div> 
+    <div class="col-md-6">
+      <button type="submit" class="btn btn-primary">Modificar Datos</button>
+    </div>
+  </form>
+{% endblock %}

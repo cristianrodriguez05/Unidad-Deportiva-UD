@@ -1,0 +1,10 @@
+{%extends './base_empleados.html'%}
+
+{% block title %} index{% endblock %}
+
+
+{% block body %}
+{%for i in resultados%}
+  <div><h1>{{i.nombre}} {{i.apellido}}</h1></div>
+{%endfor%}
+{% endblock %}
